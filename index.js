@@ -18,6 +18,7 @@ let now = 0;
 let then = 0;
 let delta = 0;
 const FRAME_TIME = 1000 / 60;
+let audio = new AudioData();
 const tick = () => {
 	dTick('new frame');
 	frameCount++;
@@ -25,6 +26,7 @@ const tick = () => {
 	dFps(1000 / (now - then));
 	delta = (now - then) / FRAME_TIME;
 	dUpdate('starting');
+  audio.update();
 	update();
 	dUpdate('ended');
 	dDraw('starting');
@@ -41,6 +43,7 @@ const H = c.height / 100;
 // globals
 
 const update = () => {
+  console.log(audio.mediumFrequencyData);
 };
 
 const draw = () => {
