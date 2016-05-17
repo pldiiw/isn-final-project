@@ -1,6 +1,6 @@
 'use strict';
-// to enable debug, uncomment the next line
-// window.localStorage.debug = '*';
+// to enable debug, add an asterisk to the string in the next line
+window.localStorage.debug = '';
 const dSetup = debug('setup');
 const dTick = debug('tick');
 const dUpdate = debug('update');
@@ -18,6 +18,7 @@ let now = 0;
 let then = 0;
 let delta = 0;
 const FRAME_TIME = 1000 / 60;
+let audio = new AudioData();
 const tick = () => {
 	dTick('new frame');
 	frameCount++;
@@ -25,6 +26,7 @@ const tick = () => {
 	dFps(1000 / (now - then));
 	delta = (now - then) / FRAME_TIME;
 	dUpdate('starting');
+  audio.update();
 	update();
 	dUpdate('ended');
 	dDraw('starting');
