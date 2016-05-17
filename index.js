@@ -1,6 +1,6 @@
 'use strict';
-// to enable debug, uncomment the next line
-// window.localStorage.debug = '*';
+// to enable debug, add an asterisk to the string in the next line
+window.localStorage.debug = '';
 const dSetup = debug('setup');
 const dTick = debug('tick');
 const dUpdate = debug('update');
@@ -43,7 +43,6 @@ const H = c.height / 100;
 // globals
 
 const update = () => {
-  console.log(audio.mediumFrequencyData);
 };
 
 const draw = () => {

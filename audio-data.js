@@ -69,7 +69,7 @@ function AudioData () {
 // analysis.
 // As it is a function, we have to create it in the audioData prototype.
 
-AudioData.prototype.update = () => {
+AudioData.prototype.update = function () {
   // update high freqs
   this.highAnalyser.getByteFrequencyData(this.highFrequencyData);
   this.highAnalyser.getByteTimeDomainData(this.highTimeDomainData);
@@ -79,4 +79,4 @@ AudioData.prototype.update = () => {
   // update low freqs
   this.lowAnalyser.getByteFrequencyData(this.lowFrequencyData);
   this.lowAnalyser.getByteTimeDomainData(this.lowTimeDomainData);
-}
+};
