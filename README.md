@@ -10,7 +10,7 @@ experiment.
 
 This repository is under the [Unlicense][unlicense], so do everything you wish
 it.  
-EXCEPT the [debug.js][debug-file] file that was composed by [visionmedia][vm]'s
+EXCEPTED the [debug.js][debug-file] file that was composed by [visionmedia][vm]'s
 [debug][debug-repo], and therefore is under its own license (MIT).
 
 
