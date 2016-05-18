@@ -35,7 +35,12 @@ function AudioData () {
   this.source.signal.connect(this.low.filter);
   this.low.filter.connect(this.low.analyser);
 
-  this.high.filter.connect(this.audioContext.destination);
+  this.all = template;
+  this.all.filter.type = 'allpass';
+  this.source.signal.connect(this.all.filter);
+  this.all.filter.connect(this.all.analyser);
+
+  this.all.filter.connect(this.audioContext.destination);
 }
 
 AudioData.prototype.update = function () {
@@ -45,4 +50,6 @@ AudioData.prototype.update = function () {
   this.medium.analyser.getByteTimeDomainData(this.medium.timeDomainData);
   this.low.analyser.getByteFrequencyData(this.low.frequencyData);
   this.low.analyser.getByteTimeDomainData(this.low.timeDomainData);
+  this.all.analyser.getByteFrequencyData(this.all.frequencyData);
+  this.all.analyser.getByteTimeDomainData(this.all.timeDomainData);
 };
