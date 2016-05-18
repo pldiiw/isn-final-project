@@ -1,82 +1,47 @@
-"use strict";
+'use strict';
 
 function AudioData () {
 
   this.audioContext = new window.AudioContext();
 
-  this.musicSource = document.querySelector('#music');
-  this.source = this.audioContext.createMediaElementSource(this.musicSource);
+  this.source = {};
+  this.source.element = document.querySelector('#music');
+  this.source.signal = this.audioContext.createMediaElementSource(
+    this.source.element
+  );
 
-  // high freqs
-  // create the high frequencies filter
-  this.highpass = this.audioContext.createBiquadFilter();
-  this.highpass.type = "highpass";
-  this.highpass.frequency.value = 10000;
+  let template = {};
+  template.filter = this.audioContext.createBiquadFilter();
+  template.analyser = this.audioContext.createAnalyser();
+  template.frequencyData = new Uint8Array(2048);
+  template.timeDomainData = new Uint8Array(2048);
 
-  // create the linked analyzer and two arrays that will received the data of
-  // the analysis
-  this.highAnalyser = this.audioContext.createAnalyser();
-  this.highFrequencyData = new Uint8Array(this.highAnalyser.fftSize);
-  this.highTimeDomainData = new Uint8Array(this.highAnalyser.fftSize);
+  this.high = template;
+  this.high.filter.type = 'highpass';
+  this.high.filter.frequency.value = 10000;
+  this.source.signal.connect(this.high.filter);
+  this.high.filter.connect(this.high.analyser);
 
-  // routing
-  this.source.connect(this.highpass);
-  this.highpass.connect(this.highAnalyser);
+  this.medium = template;
+  this.medium.filter.type = 'bandpass';
+  this.medium.filter.frequency.value = 4750;
+  this.source.signal.connect(this.medium.filter);
+  this.medium.filter.connect(this.medium.analyser);
 
-  // medium freqs
-  // same as for the high frequencies
-  this.bandpass = this.audioContext.createBiquadFilter();
-  this.bandpass.type = "bandpass";
-  this.bandpass.frequency.value = 4750;
+  this.low = template;
+  this.low.filter.type = 'lowpass';
+  this.low.filter.frequency.value = 200;
+  this.source.signal.connect(this.low.filter);
+  this.low.filter.connect(this.low.analyser);
 
-  this.bandpassAnalyser = this.audioContext.createAnalyser();
-  this.mediumFrequencyData = new Uint8Array(this.bandpassAnalyser.fftSize);
-  this.mediumTimeDomainData = new Uint8Array(this.bandpassAnalyser.fftSize);
-
-  this.source.connect(this.bandpass);
-  this.bandpass.connect(this.bandpassAnalyser);
-
-  // low freqs
-  // same as for the medium and high frenquencies
-  this.lowpass = this.audioContext.createBiquadFilter();
-  this.lowpass.type = "lowpass";
-  this.lowpass.frequency.value = 500;
-
-  this.lowAnalyser = this.audioContext.createAnalyser();
-  this.lowFrequencyData = new Uint8Array(this.lowAnalyser.fftSize);
-  this.lowTimeDomainData = new Uint8Array(this.lowAnalyser.fftSize);
-
-  this.source.connect(this.lowpass);
-  this.lowpass.connect(this.lowAnalyser);
-
-  // all freqs
-  // same, again
-  // no filter needed here, as we need all the frequencies
-  this.allAnalyser = this.audioContext.createAnalyser();
-  this.allFrequencyData = new Uint8Array(this.allAnalyser.fftSize);
-  this.allTimeDomainData = new Uint8Array(this.allAnalyser.fftSize);
-
-  this.source.connect(this.allAnalyser);
-
-  // finally, route the source to the audio context's destination
-  this.source.connect(this.audioContext.destination);
-
-};
-
-// Now that all the instantiation and routing is done, we have to create
-// an update function that will have to be called at every browser's frame to
-// process the new incoming audio and assign it to the arrays receiving the
-// analysis.
-// As it is a function, we have to create it in the audioData prototype.
+  this.low.filter.connect(this.audioContext.destination);
+}
 
 AudioData.prototype.update = function () {
-  // update high freqs
-  this.highAnalyser.getByteFrequencyData(this.highFrequencyData);
-  this.highAnalyser.getByteTimeDomainData(this.highTimeDomainData);
-  // update medium freqs
-  this.bandpassAnalyser.getByteFrequencyData(this.mediumFrequencyData);
-  this.bandpassAnalyser.getByteTimeDomainData(this.mediumTimeDomainData);
-  // update low freqs
-  this.lowAnalyser.getByteFrequencyData(this.lowFrequencyData);
-  this.lowAnalyser.getByteTimeDomainData(this.lowTimeDomainData);
+  this.high.analyser.getByteFrequencyData(this.high.frequencyData);
+  this.high.analyser.getByteTimeDomainData(this.high.timeDomainData);
+  this.medium.analyser.getByteFrequencyData(this.medium.frequencyData);
+  this.medium.analyser.getByteTimeDomainData(this.medium.timeDomainData);
+  this.low.analyser.getByteFrequencyData(this.low.frequencyData);
+  this.low.analyser.getByteTimeDomainData(this.low.timeDomainData);
 };
