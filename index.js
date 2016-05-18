@@ -1,6 +1,6 @@
 'use strict';
 // to enable debug, add an asterisk to the string in the next line
-window.localStorage.debug = '';
+window.localStorage.debug = '*';
 const dTick = debug('tick');
 // const dUpdate = debug('update');
 const dDraw = debug('draw');

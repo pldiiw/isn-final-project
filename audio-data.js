@@ -13,6 +13,7 @@ function AudioData () {
   let template = {};
   template.filter = this.audioContext.createBiquadFilter();
   template.analyser = this.audioContext.createAnalyser();
+  template.analyser.smoothingTimeConstant = 0;
   template.frequencyData = new Uint8Array(2048);
   template.timeDomainData = new Uint8Array(2048);
 
@@ -34,7 +35,7 @@ function AudioData () {
   this.source.signal.connect(this.low.filter);
   this.low.filter.connect(this.low.analyser);
 
-  this.low.filter.connect(this.audioContext.destination);
+  this.high.filter.connect(this.audioContext.destination);
 }
 
 AudioData.prototype.update = function () {

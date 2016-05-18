@@ -1,31 +1,41 @@
 let audio = new AudioData();
+let globals = {
+  Clear : {},
+  Stripes: {},
+  TribalSquare: {
+    left: 10,
+    wich: true
+  }
+};
 
 function draw () {
-  ctx.clearRect(0, 0, W * 100, H * 100);
   audio.update();
+
+  (function Clear () {
+    ctx.save();
+
+    ctx.fillStyle = 'black';
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(0, 0, W * 100, H * 100);
+
+    ctx.restore();
+  })();
 
   (function Stripes () {
     ctx.save();
 
     ctx.strokeStyle = 'white';
+    ctx.shadowBlur = 100;
+    ctx.shadowColor = 'white';
     ctx.beginPath();
-    [
-      5, 10, 15, 20, 25, 30, 35, 40, 45, 50,
-      55, 60, 65, 70, 75, 80, 85, 90,95
-    ].forEach((v) => {
-      ctx.moveTo(W * v, 0);
-      if (Math.random() > 0.01) {
-        ctx.bezierCurveTo(
-          W * v + audio.low.frequencyData.reduce((a, v) => a + (v / 512), 0.0), H * 25,
-          W * v - audio.medium.frequencyData.reduce((a, v) => a + (v / 512), 0.0), H * 75,
-          W * v, H * 100
-        );
+    " ".repeat(19).split('').forEach((v, i) => {
+      const xoffset = W * (i + 1) * 5;
+      if (Math.random() > 0.1) {
+        ctx.moveTo(xoffset, 0);
+        ctx.bezierCurveTo(xoffset, H * 25, xoffset, H * 75, xoffset, H * 100);
       } else {
-        ctx.bezierCurveTo(
-          W * v - audio.low.frequencyData.reduce((a, v) => a + (v / 512), 0.0), H * 25,
-          W * v + audio.medium.frequencyData.reduce((a, v) => a + (v / 512), 0.0), H * 75,
-          W * v, H * 100
-        );
+        ctx.moveTo(0, xoffset);
+        ctx.bezierCurveTo(W * 25, xoffset, W * 75, xoffset, W * 100, xoffset);
       }
     });
     ctx.stroke();
@@ -34,22 +44,36 @@ function draw () {
     ctx.restore();
   })();
 
-
-
-
-
-  (function CircledSquare () {
+  (function TribalSquare () {
     ctx.save();
-    ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
+
+    ctx.fillStyle = 'white'
     ctx.strokeStyle = 'white';
-    ctx.beginPath();
-    ctx.moveTo(W * 50, H * 25);
-    ctx.bezierCurveTo(W * 62.5, H * 37.5, W * 62.5, H * 62.5, W * 50, H * 75);
-    ctx.moveTo(W * 50, H * 75);
-    ctx.bezierCurveTo(W * 37.5, H * 62.5, W * 37.5, H * 37.5, W * 50, H * 25);
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = 'white';
+
+    if (globals.TribalSquare.left < 0) {
+      globals.TribalSquare.wich = !globals.TribalSquare.wich;
+      globals.TribalSquare.left = Math.random() * 10;
+    }
+    globals.TribalSquare.left--;
+
+    if (globals.TribalSquare.wich) {
+      ctx.translate(W * 50, H * 50);
+      ctx.rotate(frameCount / 60);
+      ctx.rect(W * -10, W * -10, W * 20, W * 20);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(W * 50, H * 25);
+      ctx.quadraticCurveTo(W * 65, H * 50, W * 50, H * 75);
+      ctx.moveTo(W * 50, H * 75);
+      ctx.quadraticCurveTo(W * 35, H * 50, W * 50, H * 25);
+      ctx.closePath();
+    }
+
     ctx.stroke();
     ctx.fill();
-    ctx.closePath();
+
     ctx.restore();
   })();
 }
